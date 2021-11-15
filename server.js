@@ -7,6 +7,7 @@ const index = require("./routes/index");
 const app = express();
 
 app.use(cors)
+app.use(express.json())
 app.use(index);
 
 const server = http.createServer(app);
@@ -24,7 +25,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("Client disconnected: ", socket.id);
-    /* clearInterval(interval); */
   });
 });
 
