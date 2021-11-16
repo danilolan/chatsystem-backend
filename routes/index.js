@@ -6,8 +6,8 @@ router.get("/", (req, res) => {
   res.send({ response: "I am alive" }).status(200);
 });
 
-router.post("/users", (req,res) => {
-  const user = req.body
+router.post("/postUser", (req,res) => {
+  const values = req.body
 
   fs.readFile('./data/users.json', 'utf8', function readFileCallback(err, data){
     if (err){
@@ -15,13 +15,13 @@ router.post("/users", (req,res) => {
     } else {
     array = JSON.parse(data);
     for(var i=0; i < array.length; i++){
-      if(user.name === array[i].name){
+      if(values.user === array[i].user){
         res.send("Usuário já registrado")
         console.log('Usuario já existe')
         return
       } 
     }    
-    array.push({id: (array.length + 1) , name: user.name, password: user.password});
+    array.push({id: (array.length + 1) , user: values.user, password: values.password});
     console.log(array) 
     json = JSON.stringify(array); 
     fs.writeFile('./data/users.json', json, 'utf8', (err) => {
@@ -34,8 +34,9 @@ router.post("/users", (req,res) => {
   }});
 })
 
-router.get("/users", (req,res) => {
-  const user = req.body
+router.post("/login", (req,res) => {
+  const loginValues = req.body
+  console.log("/login => req.body : ", loginValues)
 
   fs.readFile('./data/users.json', 'utf8', function readFileCallback(err, data){
     if (err){
@@ -43,12 +44,12 @@ router.get("/users", (req,res) => {
     } else {
       array = JSON.parse(data);
       for(var i=0; i < array.length; i++){
-        if(user.name === array[i].name && user.password === array[i].password){
-          res.send(array[i])
+        if(loginValues.user === array[i].user && loginValues.password === array[i].password){
+          res.send({loginValues: array[i], token: array[i].id})
           return
         } 
       }
-      res.send('Nome ou senha incorretos')
+      res.send({error: 'Senha ou Nome incorretos'})
     }
   })    
 })
