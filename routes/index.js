@@ -45,7 +45,8 @@ router.post("/login", (req,res) => {
       array = JSON.parse(data);
       for(var i=0; i < array.length; i++){
         if(loginValues.user === array[i].user && loginValues.password === array[i].password){
-          res.send({loginValues: array[i], token: array[i].id})
+          var token = array[i].id //GERAR AUTENTICAÇÃO
+          res.send({token: token})
           return
         } 
       }
@@ -54,4 +55,21 @@ router.post("/login", (req,res) => {
   })    
 })
 
+router.get("/user", (req,res) => {
+  const token = req.query.token
+  fs.readFile('./data/users.json', 'utf8', function readFileCallback(err, data){
+    if (err){
+      console.log(err);
+    } else {
+      array = JSON.parse(data);
+      for(var i=0; i < array.length; i++){
+        if(token == array[i].id){
+          res.send(array[i])
+          return
+        }
+      }
+      res.send('Nenhum usuário encontrado')
+    }
+  })
+})
 module.exports = router;
